@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kart Ekleme</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+
+    <form method="post" th:action="@{/addcard}" th:object="${addingCardRequest}">
+        <div class="row">
+            <div class="col">
+                <h3 class="title">Payment</h3>
+
+                <div class="inputBox">
+                    <label for="cardHolderName">
+                        Name On Card:
+                    </label>
+                    <input type="text" th:value="${addingCardRequest.cardHolderName}" id="cardHolderName"
+                           name="cardHolderName"
+                           placeholder="Enter card name"
+                           required>
+                </div>
+
+                <div class="inputBox">
+                    <label for="cardPan">
+                        Credit Card Number:
+                    </label>
+                    <input type="text" th:value="${addingCardRequest.cardPan}" id="cardPan"
+                           name="cardPan"
+                           placeholder="1111-2222-3333-4444"
+                           maxlength="19" required>
+                </div>
+
+                <div class="inputBox">
+                    <label for="cardExpiry">
+                        ExpirationDate
+                    </label>
+                    <input type="text" th:value="${addingCardRequest.cardExpiry}" id="cardExpiry"
+                           name="cardExpiry"
+                           placeholder="01/2024"
+                           maxlength="19" required>
+                </div>
+
+                <div class="inputBox">
+                    <label for="cvv">CVV</label>
+                    <input type="number" th:value="${addingCardRequest.cvv}" id="cvv"
+                           name="cvv"
+                           placeholder="1234" required>
+                </div>
+            </div>
+
+        </div>
+
+
+        <input type="submit" value="Proceed to Checkout"
+               class="submit_btn">
+    </form>
+
+</div>
+</body>
+</html>

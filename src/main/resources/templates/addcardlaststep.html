@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kart Ekleme</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <form method="post" th:action="@{https://test.merchantsafeunipay.com/msu/api/v2/post/preauth3d/} + ${sessionToken}">
+        <div class="row">
+            <div class="col">
+                <h3 class="title">Payment</h3>
+
+                <div class="inputBox">
+                    <label for="cardToken">
+                        Name On Card:
+                    </label>
+                    <input type="text" th:value="${cardToken}" id="cardToken"
+                           name="cardToken"
+                           placeholder="Enter card name"
+                           required>
+                </div>
+
+                <div class="inputBox">
+                    <label for="cvv">CVV</label>
+                    <input type="number" th:value="${cvv}" id="cvv"
+                           name="cvv"
+                           placeholder="1234" required>
+                </div>
+            </div>
+
+        </div>
+
+        <input type="submit" value="ÖDEEEEEEEEE"
+               class="submit_btn">
+    </form>
+
+</div>
+</body>
+</html>

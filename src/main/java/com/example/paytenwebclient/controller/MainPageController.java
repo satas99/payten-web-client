@@ -3,7 +3,6 @@ package com.example.paytenwebclient.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -48,7 +47,7 @@ public class MainPageController {
 
     @PostMapping("/addcard")
     @ResponseBody
-    public String addCard(Model model, @ModelAttribute("addingCardRequest") AddingCardRequest addingCardRequest) throws JsonProcessingException {
+    public String addCard(@ModelAttribute("addingCardRequest") AddingCardRequest addingCardRequest) throws JsonProcessingException {
         final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
         final var body = restClient.post().uri("/cards/add").body(AddingCardRequest
                 .builder()
@@ -76,8 +75,8 @@ public class MainPageController {
     }
 
     @PostMapping("/3D-result")
-    public String succes(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Model model) throws JsonProcessingException {
-        /*final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
+    public String result(HttpServletRequest httpServletRequest, Model model) throws JsonProcessingException {
+        final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
         final var verifyPreAuthRequest = VerifyPreAuthRequest.builder()
                 .pgTranId(httpServletRequest.getParameter("pgTranId"))
                 .cardToken(paytenSessionScope.getCardToken()).build();
@@ -86,7 +85,7 @@ public class MainPageController {
                 .retrieve()
                 .body(String.class);
         final var verifyPreAuthResponse = objectMapper.readValue(response, VerifyPreAuthResponse.class);
-        model.addAttribute("success", verifyPreAuthResponse.getData().getSuccess());*/
+        model.addAttribute("success", verifyPreAuthResponse.getData().getSuccess());
         return "3D-result";
     }
 

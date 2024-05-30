@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Provizyon alma test ekranı</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+<div class="container">
+
+    <form method="post" th:object="${redirectAttrs}">
+        <div class="row">
+            <div class="col">
+                <h3 class="title">Provision Result</h3>
+
+
+                <div class="result">
+                    <label for="result">
+                        RESULT:
+                    </label>
+                    <p id="result" th:text="${result}" class="alert alert-danger"/></p>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

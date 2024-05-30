@@ -10,5 +10,11 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PaymentPreAuthResponseData {
-    private Boolean success;
+    private String pgTranId;
+    private String responseCode;
+    private String errorCode;
+    private String errorMsg;
+    private String responseMsg;
+    private String violatorParam;
+    private String merchantPaymentId;
 }

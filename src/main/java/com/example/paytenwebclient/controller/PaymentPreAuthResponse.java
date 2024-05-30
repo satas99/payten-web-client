@@ -11,4 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PaymentPreAuthResponse {
     private PaymentPreAuthResponseData data;
+
 }

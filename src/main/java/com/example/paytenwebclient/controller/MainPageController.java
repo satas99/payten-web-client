@@ -1,7 +1,11 @@
 package com.example.paytenwebclient.controller;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -103,14 +107,14 @@ public class MainPageController {
 
 
     @PostMapping("/preauth")
-    public String preauth(@ModelAttribute("provisionRequest") ProvisionRequest provisionRequest) throws JsonProcessingException {
+    public String preauth(@ModelAttribute("provisionRequest") ProvisionRequest provisionRequest,Model model) throws JsonProcessingException {
 
         final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
     final var paymentPreauthRequest =
         PaymentPreAuthRequest.builder()
             .merchantPaymentId(String.valueOf(new Random().nextInt(16)))
-            .cardId("e28c80a6-6f3b-4b30-bc15-2531e3f1de6a")
-            .amount("159")
+            .cardId("3f625d6c-3cfd-4ba4-893a-ee702b629bd8")
+            .amount("1500")
             .cardPan("6501617060023449")
             .cardExpiry("12.2040")
             .cardCvv("000")
@@ -121,10 +125,15 @@ public class MainPageController {
                 .retrieve()
                 .body(String.class);
 
+
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
         final var paymentPreauthResponse = objectMapper.readValue(response, PaymentPreAuthResponse.class);
+        model.addAttribute("result", paymentPreauthResponse.getData().getResponseCode().equals("00")?"Provizyon alma basarili":"Provizyon alma sirasinda hata "+paymentPreauthResponse.getData().getErrorMsg());
 
-
-        return response;
+        return "preauthResult";
     }
 
 

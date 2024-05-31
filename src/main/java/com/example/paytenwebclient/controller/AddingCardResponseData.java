@@ -12,4 +12,5 @@ import lombok.Setter;
 public class AddingCardResponseData {
     private String sessionToken;
     private String cardToken;
+    private String paymentId;
 }

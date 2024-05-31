@@ -9,5 +9,5 @@ import lombok.*;
 @NoArgsConstructor
 public class VerifyPreAuthRequest {
     private String cardToken;
-    private String pgTranId;
+    private String paymentId;
 }

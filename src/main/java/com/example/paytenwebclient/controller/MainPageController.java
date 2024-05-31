@@ -75,6 +75,7 @@ public class MainPageController {
         final var addingCardResponse = objectMapper.readValue(body, AddingCardResponse.class);
         final var preAuthRequest = new PreAuthRequest(addingCardResponse.getData().getSessionToken(), addingCardResponse.getData().getCardToken(), addingCardRequest.getCvv());
         paytenSessionScope.setCardToken(addingCardResponse.getData().getCardToken());
+        paytenSessionScope.setPaymentId(addingCardResponse.getData().getPaymentId());
         return restClient.post().uri("/cards/pre-auth-page").body(preAuthRequest).retrieve().body(String.class);
     }
 //kard pan gonderdigimde farklı kartın tokenini alıp basarılı provizyon alıyor acık olabilir!!!
@@ -86,10 +87,10 @@ public class MainPageController {
     }
 
     @PostMapping("/3D-result")
-    public String result(HttpServletRequest httpServletRequest, Model model) throws JsonProcessingException {
+    public String result(Model model) throws JsonProcessingException {
         final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
         final var verifyPreAuthRequest = VerifyPreAuthRequest.builder()
-                .pgTranId(httpServletRequest.getParameter("pgTranId"))
+                .paymentId(paytenSessionScope.getPaymentId())
                 .cardToken(paytenSessionScope.getCardToken()).build();
         final var response = restClient.post().uri("/cards/verify-pre-auth")
                 .body(verifyPreAuthRequest)

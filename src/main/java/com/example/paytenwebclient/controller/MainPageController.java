@@ -48,10 +48,10 @@ public class MainPageController {
     @GetMapping("/addcard")
     public String addCard(Model model) {
         final var request = new AddingCardRequest("1",
-                "John Doele", "John Doe",
+                "John Doele", "John Doele",
                 "customer@gmail.com", "5422433412",
-                "12/26", "John Doe",
-                "5218487962459752", "http://localhost:8081/3D-result", "000");
+                "12/40", "John Doele",
+                "6501617060023449", "http://localhost:8081/3D-result", "000");
         model.addAttribute("addingCardRequest", request);
         return "addcard";
     }
@@ -77,7 +77,7 @@ public class MainPageController {
         paytenSessionScope.setCardToken(addingCardResponse.getData().getCardToken());
         return restClient.post().uri("/cards/pre-auth-page").body(preAuthRequest).retrieve().body(String.class);
     }
-
+//kard pan gonderdigimde farklı kartın tokenini alıp basarılı provizyon alıyor acık olabilir!!!
 
     @RequestMapping(value = "/someURL", method = GET)
     public String yourMethod(RedirectAttributes redirectAttributes) {
@@ -112,12 +112,10 @@ public class MainPageController {
         final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
     final var paymentPreauthRequest =
         PaymentPreAuthRequest.builder()
-            .merchantPaymentId(String.valueOf(new Random().nextInt(16)))
-            .cardId("3f625d6c-3cfd-4ba4-893a-ee702b629bd8")
-            .amount("1500")
-            .cardPan("6501617060023449")
-            .cardExpiry("12.2040")
-            .cardCvv("000")
+            .merchantPaymentId(String.valueOf(new Random().nextInt(16) + 108))
+            //.merchantPaymentId(String.valueOf(110))
+            .cardId("1beb9865-5e33-4910-94b6-fdaaa56a7185")
+            .amount("1602")
             .build();
 
         final var response = restClient.post().uri("/provision/open")

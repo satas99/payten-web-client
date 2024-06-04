@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kart Güncelleme ekranı</title>
+</head>
+<body>
+<div class="container">
+
+  <form method="post" th:action="@{/editCard}" th:object="${editingCardRequest}">
+    <div class="row">
+      <div class="col">
+        <h3 class="title">Güncelle</h3>
+      </div>
+
+
+        <div class="inputBox">
+            <label for="cardId">
+                Card ID:
+            </label>
+            <input type="text" th:value="${editingCardRequest.cardId}" id="cardId"
+                   name="cardId"
+                   placeholder="cardId"
+                   maxlength="200" required>
+        </div>
+
+        <div class="inputBox">
+            <label for="cardSaveName">
+                Card save name:
+            </label>
+            <input type="text" th:value="${editingCardRequest.cardSaveName}" id="cardSaveName"
+                   name="cardSaveName"
+                   placeholder="1111-2222-3333-4444"
+                   maxlength="19" required>
+        </div>
+
+        <div class="inputBox">
+            <label for="cardExpiry">
+                ExpirationDate
+            </label>
+            <input type="text" th:value="${editingCardRequest.cardExpiry}" id="cardExpiry"
+                   name="cardExpiry"
+                   placeholder="01/2024"
+                   maxlength="19" required>
+        </div>
+
+        <div class="inputBox">
+            <label for="cvv">CVV</label>
+            <input type="number" th:value="${editingCardRequest.cvv}" id="cvv"
+                   name="cvv"
+                   placeholder="1234" required>
+        </div>
+
+
+    </div>
+    <input type="submit" value="Kartı Güncelle"
+           class="submit_btn">
+  </form>
+</div>
+</body>
+</html>

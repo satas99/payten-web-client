@@ -44,6 +44,15 @@ public class MainPageController {
         return "preauth";
     }
 
+    @GetMapping("/addcard")
+    public String addCard(Model model) {
+        final var request = new AddCardRequest("1",
+                "John Doe", "12/26", "John Doe",
+                "5218487962459752", "000");
+        model.addAttribute("addCardRequest", request);
+        return "addcard";
+    }
+
     @GetMapping("/editCard")
     public String editCard(Model model) {
 
@@ -59,87 +68,20 @@ public class MainPageController {
 
         return "editCard";
     }
-
-  @GetMapping("/addcard")
-  public String addCard(Model model) {
-//    final var request =
-//        new AddingCardRequest(
-//            "3",
-//            "Atmo test",
-//            "Atmo test",
-//            "customer@gmail.com",
-//            "5422433412",
-//            "04/2027",
-//            "Atmo test",
-//            "5406697543211173",
-//            "http://localhost:8081/3D-result",
-//            "423");
-//      final var request =    new AddingCardRequest(
-//            "7",
-//            "Atmo test",
-//            "Atmo test",
-//            "customer@gmail.com",
-//            "5422433412",
-//            "12/26",
-//            "Atmo test",
-//            "5163103002982563",
-//            "http://localhost:8081/3D-result",
-//            "000");
-    final var request = new AddingCardRequest(
-            "8",
-            "yasemin atmoTest ",
-            "Bob atmoTest",
-            "customer@gmail.com",
-            "5422433412",
-            "12/30",
-            "atmoTest",
-            "5571135571135575",
-            "http://localhost:8081/3D-result",
-            "000");
-//    final var request = new AddingCardRequest(
-//            "5",
-//            "Bob test ",
-//            "Bob atmoTest",
-//            "customer@gmail.com",
-//            "5422433412",
-//            "12/40",
-//            "atmoTest",
-//            "5400617030400291",
-//            "http://localhost:8081/3D-result",
-//            "000");
-//    final var request = new AddingCardRequest(
-//            "10",
-//            "atmo test ",
-//            "0406 atmoTest",
-//            "customer@gmail.com",
-//            "5422433412",
-//            "12/40",
-//            "yeni kart",
-//            "4506347028991897",
-//            "http://localhost:8081/3D-result",
-//            "000");
-    model.addAttribute("addingCardRequest", request);
-    return "addcard";
-  }
-
     @PostMapping("/addcard")
     @ResponseBody
-    public String addCard(@ModelAttribute("addingCardRequest") AddingCardRequest addingCardRequest) throws JsonProcessingException {
+    public String addCard(@ModelAttribute("addCardRequest") AddCardRequest addCardRequest) throws JsonProcessingException {
         final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
-        final var body = restClient.post().uri("/cards/add").body(AddingCardRequest
+        final var body = restClient.post().uri("/cards/add").body(AddCardRequest
                 .builder()
-                .accountId("8")
-                .cardHolderName(addingCardRequest.getCardHolderName())
-                .customerName(addingCardRequest.getCardHolderName())
-                .customerEmail("customer@gmail.com")
-                .customerPhone("5422433412")
-                .cardExpiry(addingCardRequest.getCardExpiry())
-                .cardSaveName(addingCardRequest.getCardHolderName())
-                .cardPan(addingCardRequest.getCardPan())
-                .callBackUrl("http://localhost:8081/3D-result")
+                .accountId("1")
+                .cardHolderName(addCardRequest.getCardHolderName())
+                .cardExpiry(addCardRequest.getCardExpiry())
+                .cardSaveName(addCardRequest.getCardHolderName())
+                .cardPan(addCardRequest.getCardPan())
                 .build()).retrieve().body(String.class);
-        final var addingCardResponse = objectMapper.readValue(body, AddingCardResponse.class);
-        final var preAuthRequest = new PreAuthRequest(addingCardResponse.getData().getSessionToken(), addingCardResponse.getData().getCardToken(), addingCardRequest.getCvv());
+        final var addingCardResponse = objectMapper.readValue(body, AddCardResponse.class);
+        final var preAuthRequest = new PreAuthRequest(addingCardResponse.getData().getSessionToken(), addingCardResponse.getData().getCardToken(), addCardRequest.getCvv());
         paytenSessionScope.setCardToken(addingCardResponse.getData().getCardToken());
         paytenSessionScope.setPaymentId(addingCardResponse.getData().getPaymentId());
         return restClient.post().uri("/provision/pre-auth-page").body(preAuthRequest).retrieve().body(String.class);
@@ -246,4 +188,28 @@ public class MainPageController {
                 .retrieve()
                 .body(String.class);
     }
+
+    @PostMapping("/verifycard")
+    @ResponseBody
+    public String verifyCard(@ModelAttribute("verifyCardRequest") VerifyCardRequest verifyCardRequest) throws JsonProcessingException {
+        final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
+        final var body = restClient.post().uri("/cards/verification").body(VerifyCardRequest
+                .builder()
+                .cardId(verifyCardRequest.getCardId())
+                .build()).retrieve().body(String.class);
+        final var verifyCardResponse = objectMapper.readValue(body, VerifyCardResponse.class);
+        final var preAuthRequest = new PreAuthRequest(verifyCardResponse.getData().getSessionToken(), verifyCardResponse.getData().getCardToken(), verifyCardRequest.getCvv());
+        paytenSessionScope.setCardToken(verifyCardResponse.getData().getCardToken());
+        paytenSessionScope.setPaymentId(verifyCardResponse.getData().getPaymentId());
+        return restClient.post().uri("/provision/pre-auth-page").body(preAuthRequest).retrieve().body(String.class);
+    }
+
+    @GetMapping("/verifycard")
+    public String verifyCard(Model model) {
+        final var request = new VerifyCardRequest("308e3226-e826-4286-8057-c69b915597cd", "000");
+        model.addAttribute("verifyCardRequest", request);
+        return "verifycard";
+    }
+
+
 }

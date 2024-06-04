@@ -5,10 +5,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class AddingCardResponse {
-    private AddingCardResponseData data;
+@Getter
+@Setter
+public class AddCardResponseData {
+    private String sessionToken;
+    private String cardToken;
+    private String paymentId;
 }

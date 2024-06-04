@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Kart Ekleme</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+
+    <form method="post" th:action="@{/verifycard}" th:object="${verifyCardRequest}">
+        <div class="row">
+            <div class="col">
+                <h3 class="title">Payment</h3>
+                <div class="inputBox">
+                    <label for="cardId">
+                        Credit Card Number:
+                    </label>
+                    <input type="text" th:value="${verifyCardRequest.cardId}" id="cardId"
+                           name="cardId" required>
+                </div>
+
+                <div class="inputBox">
+                    <label for="cvv">CVV</label>
+                    <input type="number" th:value="${verifyCardRequest.cvv}" id="cvv"
+                           name="cvv"
+                           placeholder="1234" required>
+                </div>
+            </div>
+
+        </div>
+
+
+        <input type="submit" value="Proceed to Checkout"
+               class="submit_btn">
+    </form>
+
+</div>
+</body>
+</html>

@@ -8,6 +8,5 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class VerifyPreAuthRequest {
-    private String cardToken;
     private String paymentId;
 }

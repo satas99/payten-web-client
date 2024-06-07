@@ -7,23 +7,12 @@
 </head>
 
 <body>
-<div class="container">
-
-    <form method="post" th:object="${redirectAttrs}">
-        <div class="row">
-            <div class="col">
-                <h3 class="title">Provision Result</h3>
-
-
-                <div class="result">
-                    <label for="result">
-                        RESULT:
-                    </label>
-                    <p id="result" th:text="${result}" class="alert alert-danger"/></p>
-                </div>
-            </div>
-        </div>
-    </form>
-</div>
+<div th:if="${success}">Provizyon Alma Başarılı</div>
+<br>
+<div th:if="${!success}">Provizyon Alma İşleminiz Başarısız Oldu</div>
+<br>
+<div th:utext="${errorCode}"></div>
+<br>
+<div th:utext="${errorMessage}"></div>
 </body>
 </html>

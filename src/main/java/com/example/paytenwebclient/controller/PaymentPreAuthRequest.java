@@ -9,6 +9,6 @@ import lombok.*;
 @NoArgsConstructor
 public class PaymentPreAuthRequest {
     private String cardId;
-    private String paymentId;
+    private String rentalId;
     private String amount;
 }

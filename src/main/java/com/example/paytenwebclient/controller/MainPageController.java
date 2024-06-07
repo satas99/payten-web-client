@@ -6,16 +6,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClient;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Random;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/")
@@ -56,99 +54,91 @@ public class MainPageController {
     @GetMapping("/editCard")
     public String editCard(Model model) {
 
-    final var request =
-        new EditingCardRequest(
-            "e90bf5df-ac33-4fd4-a8eb-2384be743dde",
-            "12/26",
-            "my edited new card",
-            "http://localhost:8081/3D-result",
-            "000",
-            "7");
+        final var request =
+                new EditingCardRequest(
+                        "e90bf5df-ac33-4fd4-a8eb-2384be743dde",
+                        "12/26",
+                        "my edited new card",
+                        "http://localhost:8081/3D-result",
+                        "000",
+                        "7");
         model.addAttribute("editingCardRequest", request);
 
         return "editCard";
     }
+
     @PostMapping("/addcard")
     @ResponseBody
     public String addCard(@ModelAttribute("addCardRequest") AddCardRequest addCardRequest) throws JsonProcessingException {
         final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
-        final var body = restClient.post().uri("/cards/add").body(AddCardRequest
+        return restClient.post().uri("/cards/add").body(AddCardRequest
                 .builder()
                 .accountId("1")
                 .cardHolderName(addCardRequest.getCardHolderName())
                 .cardExpiry(addCardRequest.getCardExpiry())
                 .cardSaveName(addCardRequest.getCardHolderName())
                 .cardPan(addCardRequest.getCardPan())
+                .cvv(addCardRequest.getCvv())
                 .build()).retrieve().body(String.class);
-        final var addingCardResponse = objectMapper.readValue(body, AddCardResponse.class);
-        final var preAuthRequest = new PreAuthRequest(addingCardResponse.getData().getSessionToken(), addingCardResponse.getData().getCardToken(), addCardRequest.getCvv());
-        paytenSessionScope.setCardToken(addingCardResponse.getData().getCardToken());
-        paytenSessionScope.setPaymentId(addingCardResponse.getData().getPaymentId());
-        return restClient.post().uri("/provision/pre-auth-page").body(preAuthRequest).retrieve().body(String.class);
     }
 //kard pan gonderdigimde farklı kartın tokenini alıp basarılı provizyon alıyor acık olabilir!!!
 
-    @RequestMapping(value = "/someURL", method = GET)
-    public String yourMethod(RedirectAttributes redirectAttributes) {
-        redirectAttributes.addAttribute("rd", "rdValue");
-        return "redirect:/someOtherURL";
-    }
-
     @PostMapping("/3D-result")
-    public String result(Model model) throws JsonProcessingException {
+    public String result(Model model, HttpServletRequest httpServletRequest) throws JsonProcessingException {
         final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
         final var verifyPreAuthRequest = VerifyPreAuthRequest.builder()
-                .paymentId(paytenSessionScope.getPaymentId())
-                .cardToken(paytenSessionScope.getCardToken()).build();
+                .paymentId(httpServletRequest.getParameter("merchantPaymentId"))
+                .build();
         final var response = restClient.post().uri("/provision/verify-pre-auth")
                 .body(verifyPreAuthRequest)
                 .retrieve()
                 .body(String.class);
         final var verifyPreAuthResponse = objectMapper.readValue(response, VerifyPreAuthResponse.class);
         model.addAttribute("success", verifyPreAuthResponse.getData().getSuccess());
+        model.addAttribute("errorCode", verifyPreAuthResponse.getData().getErrorCode());
+        model.addAttribute("errorMessage", verifyPreAuthResponse.getData().getErrorMessage());
         return "3D-result";
     }
+
     @PostMapping("/savecard")
     public String saveCard() {
         return "savecard";
     }
 
-  // provizyon alma servisidir
-  @PostMapping("/preauth")
-  public String preauth(
-      @ModelAttribute("provisionRequest") ProvisionRequest provisionRequest, Model model)
-      throws JsonProcessingException {
+    // provizyon alma servisidir
+    @PostMapping("/preauth")
+    public String preauth(
+            @ModelAttribute("provisionRequest") ProvisionRequest provisionRequest, Model model)
+            throws JsonProcessingException {
 
-    final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
-    final var paymentPreauthRequest =
-        PaymentPreAuthRequest.builder()
-            .paymentId(String.valueOf(new Random().nextInt(160) + 1008))
-            .cardId("e90bf5df-ac33-4fd4-a8eb-2384be743dde")
-            .amount("1126")
-            .build();
+        final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
+        final var paymentPreauthRequest =
+                PaymentPreAuthRequest.builder()
+                        .cardId("b61faf6e-32ef-454f-b827-698eadc2c6cc")
+                        .rentalId(UUID.randomUUID().toString())
+                        .amount("10")
+                        .build();
 
-    final var response =
-        restClient
-            .post()
-            .uri("/provision/open")
-            .body(paymentPreauthRequest)
-            .retrieve()
-            .body(String.class);
+        final var response =
+                restClient
+                        .post()
+                        .uri("/provision/open")
+                        .body(paymentPreauthRequest)
+                        .retrieve()
+                        .body(String.class);
 
-    objectMapper.registerModule(new JavaTimeModule());
-    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
 
-    final var paymentPreauthResponse =
-        objectMapper.readValue(response, PaymentPreAuthResponse.class);
-    model.addAttribute(
-        "result",
-        paymentPreauthResponse.getData().getResponseCode().equals("00")
-            ? "Provizyon alma basarili"
-            : "Provizyon alma sirasinda hata " + paymentPreauthResponse.getData().getErrorMsg());
+        final var paymentPreauthResponse =
+                objectMapper.readValue(response, ProvisionResponse.class);
+        model.addAttribute("success", paymentPreauthResponse.getData().isSuccess());
+        model.addAttribute("errorCode", paymentPreauthResponse.getData().getErrorCode());
+        model.addAttribute("errorMessage", paymentPreauthResponse.getData().getErrorMessage());
 
-    return "preauthResult";
-  }
+        return "preauthResult";
+    }
 
     @PostMapping("/editCard")
     @ResponseBody

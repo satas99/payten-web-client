@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PaymentPreAuthResponse {
-    private PaymentPreAuthResponseData data;
+public class ProvisionResponse {
+    private ProvisionResponseData data;
 
 }

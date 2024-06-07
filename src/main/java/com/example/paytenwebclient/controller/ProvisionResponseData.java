@@ -9,12 +9,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class PaymentPreAuthResponseData {
-    private String pgTranId;
-    private String responseCode;
+public class ProvisionResponseData {
+    private boolean success;
     private String errorCode;
-    private String errorMsg;
-    private String responseMsg;
-    private String violatorParam;
-    private String merchantPaymentId;
+    private String errorMessage;
 }

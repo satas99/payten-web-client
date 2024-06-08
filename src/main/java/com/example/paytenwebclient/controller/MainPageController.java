@@ -61,12 +61,12 @@ public class MainPageController {
 
     final var request =
         new EditingCardRequest(
-            "e90bf5df-ac33-4fd4-a8eb-2384be743dde",
-            "12/26",
+            "3f3d7188-c7ef-4cfb-925e-ca33f3b5957b",
+            "04/27",
             "my edited new card",
             "http://localhost:8081/3D-result",
-            "000",
-            "7");
+            "423",
+            "1");
     model.addAttribute("editingCardRequest", request);
 
     return "editCard";
@@ -155,39 +155,26 @@ public class MainPageController {
   @PostMapping("/editCard")
   @ResponseBody
   public String editCard(
-      @ModelAttribute("editingCardRequest") EditingCardRequest editingCardRequest)
-      throws JsonProcessingException {
+          @ModelAttribute("editingCardRequest") EditingCardRequest editingCardRequest)
+          throws JsonProcessingException {
     final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
     final var body =
-        restClient
-            .post()
-            .uri("/cards/edit")
-            .body(
-                EditingCardRequest
-                    .builder()
-                    .accountId("8")
-                    .cardId(editingCardRequest.getCardId())
-                    .cardSaveName(editingCardRequest.getCardSaveName())
-                    .cardExpiry(editingCardRequest.getCardExpiry())
-                    .cvv(editingCardRequest.getCvv())
-                    .callBackUrl("http://localhost:8081/3D-result")
-                    .build())
-            .retrieve()
-            .body(String.class);
-    final var editingCardResponse = objectMapper.readValue(body, EditingCardResponse.class);
-    final var preAuthRequest =
-        new PreAuthRequest(
-            editingCardResponse.getData().getSessionToken(),
-            editingCardResponse.getData().getCardToken(),
-            editingCardRequest.getCvv());
-    paytenSessionScope.setCardToken(editingCardResponse.getData().getCardToken());
-    paytenSessionScope.setPaymentId(editingCardResponse.getData().getPaymentId());
-    return restClient
-        .post()
-        .uri("/provision/pre-auth-page")
-        .body(preAuthRequest)
-        .retrieve()
-        .body(String.class);
+            restClient
+                    .post()
+                    .uri("/cards/edit")
+                    .body(
+                            EditingCardRequest
+                                    .builder()
+                                    .accountId("1")
+                                    .cardId(editingCardRequest.getCardId())
+                                    .cardSaveName(editingCardRequest.getCardSaveName())
+                                    .cardExpiry(editingCardRequest.getCardExpiry())
+                                    .cvv(editingCardRequest.getCvv())
+                                    .build())
+                    .retrieve()
+                    .body(String.class);
+
+    return body;
   }
 
   @PostMapping("/verifycard")

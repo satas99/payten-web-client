@@ -10,10 +10,8 @@ import lombok.*;
 public class ProvisionRequest {
 
     private String cardId;
-    private String merchantPaymentId;
     private String amount;
-    private String cardPan;
-    private String cardExpiry;
-    private String cardCvv;
+    private String rentalId;
+
 
 }

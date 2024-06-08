@@ -5,14 +5,32 @@
     <title>Provizyon alma test ekranı</title>
     <link rel="stylesheet" href="/style.css">
 </head>
-
 <body>
 <div class="container">
-
     <form method="post" th:action="@{/preauth}" th:object="${provisionRequest}">
         <div class="row">
             <div class="col">
-                <h3 class="title">Provision</h3>
+                <h3 class="title">Provizyon Parametreleri</h3>
+
+                <div class="inputBox">
+                    <label for="cardId">
+                        Card ID:
+                    </label>
+                    <input type="text" th:value="${provisionRequest.cardId}" id="cardId"
+                           name="cardId"
+                           placeholder="cardId"
+                           maxlength="200" required>
+                </div>
+                <div class="inputBox">
+                    <label for="amount">
+                        Amount:
+                    </label>
+                    <input type="text" th:value="${provisionRequest.amount}" id="amount"
+                           name="amount"
+                           placeholder="0"
+                           maxlength="19" required>
+                </div>
+
             </div>
         </div>
         <input type="submit" value="Open Provision"

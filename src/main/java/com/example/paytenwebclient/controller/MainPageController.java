@@ -106,14 +106,12 @@ public class MainPageController {
     final var response =
         restClient
             .post()
-            .uri("/provision/verify-pre-auth")
+            .uri("/provisions/verify-pre-auth")
             .body(verifyPreAuthRequest)
             .retrieve()
             .body(String.class);
     final var verifyPreAuthResponse = objectMapper.readValue(response, VerifyPreAuthResponse.class);
     model.addAttribute("success", verifyPreAuthResponse.getData().getSuccess());
-    model.addAttribute("errorCode", verifyPreAuthResponse.getData().getErrorCode());
-    model.addAttribute("errorMessage", verifyPreAuthResponse.getData().getErrorMessage());
     return "3D-result";
   }
 
@@ -138,7 +136,7 @@ public class MainPageController {
             .build();
 
     final var response =
-        restClient.post().uri("/provision/open").body(provisionReq).retrieve().body(String.class);
+        restClient.post().uri("/provisions/open").body(provisionReq).retrieve().body(String.class);
 
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -146,9 +144,6 @@ public class MainPageController {
 
     final var paymentPreauthResponse = objectMapper.readValue(response, ProvisionResponse.class);
     model.addAttribute("success", paymentPreauthResponse.getData().isSuccess());
-    model.addAttribute("errorCode", paymentPreauthResponse.getData().getErrorCode());
-    model.addAttribute("errorMessage", paymentPreauthResponse.getData().getErrorMessage());
-
     return "preauthResult";
   }
 
@@ -182,27 +177,12 @@ public class MainPageController {
   public String verifyCard(@ModelAttribute("verifyCardRequest") VerifyCardRequest verifyCardRequest)
       throws JsonProcessingException {
     final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
-    final var body =
-        restClient
+    return restClient
             .post()
-            .uri("/cards/verification")
+            .uri("/cards/verify")
             .body(VerifyCardRequest.builder().cardId(verifyCardRequest.getCardId()).build())
             .retrieve()
             .body(String.class);
-    final var verifyCardResponse = objectMapper.readValue(body, VerifyCardResponse.class);
-    final var preAuthRequest =
-        new PreAuthRequest(
-            verifyCardResponse.getData().getSessionToken(),
-            verifyCardResponse.getData().getCardToken(),
-            verifyCardRequest.getCvv());
-    paytenSessionScope.setCardToken(verifyCardResponse.getData().getCardToken());
-    paytenSessionScope.setPaymentId(verifyCardResponse.getData().getPaymentId());
-    return restClient
-        .post()
-        .uri("/provision/pre-auth-page")
-        .body(preAuthRequest)
-        .retrieve()
-        .body(String.class);
   }
 
   @GetMapping("/verifycard")

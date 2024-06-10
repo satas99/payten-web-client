@@ -11,6 +11,4 @@ import lombok.Setter;
 @Setter
 public class VerifyPreAuthResponseData {
     private Boolean success;
-    private String errorCode;
-    private String errorMessage;
 }

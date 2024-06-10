@@ -11,6 +11,4 @@ import lombok.Setter;
 @Setter
 public class ProvisionResponseData {
     private boolean success;
-    private String errorCode;
-    private String errorMessage;
 }

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Provizyondan tahsilat yapma</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<div class="container">
+    <form method="post" th:action="@{/postauth}" th:object="${postauthRequest}">
+        <div class="row">
+            <div class="col">
+                <h3 class="title">postauthRequest Parametreleri</h3>
+
+                <div class="inputBox">
+                    <label for="cardId">
+                        Card ID:
+                    </label>
+                    <input type="text" th:value="${postauthRequest.cardId}" id="cardId"
+                           name="cardId"
+                           placeholder="cardId"
+                           maxlength="200" required>
+                </div>
+                <div class="inputBox">
+                    <label for="amount">
+                        Amount:
+                    </label>
+                    <input type="text" th:value="${postauthRequest.amount}" id="amount"
+                           name="amount"
+                           placeholder="0"
+                           maxlength="19" required>
+                </div>
+
+                <div class="inputBox">
+                    <label for="rentalId">
+                        Rental Id:
+                    </label>
+                    <input type="text" th:value="${postauthRequest.rentalId}" id="rentalId"
+                           name="rentalId"
+                           placeholder="0"
+                           maxlength="190" required>
+                </div>
+
+            </div>
+        </div>
+        <input type="submit" value="Open Provision"
+               class="submit_btn">
+    </form>
+</div>
+</body>
+</html>

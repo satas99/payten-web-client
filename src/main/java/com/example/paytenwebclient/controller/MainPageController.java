@@ -42,11 +42,25 @@ public class MainPageController {
 
     final var request =
         new ProvisionRequest(
-            "fe6f4d99-c2cc-4c0b-b28b-76a3a273ebc6", "100", UUID.randomUUID().toString());
+            "00d44eae-e935-411f-9449-3fad23ca8ced", "1000", UUID.randomUUID().toString());
     model.addAttribute("provisionRequest", request);
 
     return "preauth";
   }
+
+
+  @GetMapping("/postauth")
+  public String postauth(Model model) {
+
+    final var request =
+        new PostauthRequest(
+            "00d44eae-e935-411f-9449-3fad23ca8ced", "100", "07fa8558-c812-44c6-9469-b77fdb7cbefd");
+    model.addAttribute("postauthRequest", request);
+
+    return "postauth";
+  }
+
+
 
   @GetMapping("/addcard")
   public String addCard(Model model) {
@@ -190,5 +204,31 @@ public class MainPageController {
     final var request = new VerifyCardRequest("308e3226-e826-4286-8057-c69b915597cd", "000");
     model.addAttribute("verifyCardRequest", request);
     return "verifycard";
+  }
+
+  @PostMapping("/postauth")
+  public String postauth(
+          @ModelAttribute("postauthRequest") PostauthRequest postauthRequest, Model model)
+          throws JsonProcessingException {
+
+    final var restClient = RestClient.builder().baseUrl("http://localhost:8080/api/v1").build();
+    final var posauthReq =
+            PostauthRequest
+                    .builder()
+                    .cardId(postauthRequest.getCardId())
+                    .rentalId(postauthRequest.getRentalId())
+                    .amount(postauthRequest.getAmount())
+                    .build();
+
+    final var response =
+            restClient.post().uri("/payments/postauth").body(posauthReq).retrieve().body(String.class);
+
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    objectMapper.setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY);
+
+    final var paymentPostauthResponse = objectMapper.readValue(response, PostauthResponse.class);
+    model.addAttribute("success", paymentPostauthResponse.getData().isSuccess());
+    return "postauthResult";
   }
 }
